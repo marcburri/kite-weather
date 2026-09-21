@@ -70,7 +70,6 @@ wind_direction_deg <- as.numeric(dir_match[, 3])
 
 wind_match <- str_match(text, "Mittelwind:\\s*(-?[\\d.]+)\\s*km/h\\s*\\((\\d+)\\s*Bft\\)")
 wind_kmh <- as.numeric(wind_match[, 2])
-wind_beaufort <- as.integer(wind_match[, 3])
 
 if (!wind_direction_cardinal_raw %in% names(direction_map)) {
   stop("Unrecognised wind direction abbreviation: ", wind_direction_cardinal_raw)
@@ -82,7 +81,6 @@ new_row <- tibble(
   pressure_mb             = pressure_mb,
   gust_kt                 = gust_kt,
   wind_kt                 = kmh_to_knots(wind_kmh),
-  wind_beaufort           = wind_beaufort,
   wind_direction_cardinal = wind_direction_cardinal,
   wind_direction_deg      = wind_direction_deg,
   temperature_c           = temperature_c,
@@ -100,7 +98,6 @@ if (file.exists(csv_path)) {
     pressure_mb             = col_double(),
     gust_kt                 = col_double(),
     wind_kt                 = col_double(),
-    wind_beaufort           = col_integer(),
     wind_direction_cardinal = col_character(),
     wind_direction_deg      = col_double(),
     temperature_c           = col_double(),

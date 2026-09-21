@@ -59,7 +59,6 @@ columns rather than padding them out with fabricated data.
 | `pressure_mb`                | atmospheric pressure                         | millibar (= hPa)   |
 | `gust_kt`                    | wind gust                                    | knots (as reported by the site) |
 | `wind_kt`                    | mean wind speed                              | knots (converted from km/h) |
-| `wind_beaufort`              | mean wind speed                              | Beaufort (as reported by the site) |
 | `wind_direction_cardinal`    | wind direction                               | compass point (translated from the site's German abbreviation, e.g. `NO` → `NE`) |
 | `wind_direction_deg`         | wind direction                               | degrees            |
 | `temperature_c`              | air temperature                              | °C                 |
