@@ -2,7 +2,11 @@ name: Scrape kite-weather stations
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    # Off the top of the hour on purpose - GitHub's scheduler is busiest at
+    # minute 0 (when most repos' cron jobs fire) and can delay or drop runs
+    # scheduled there. See:
+    # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+    - cron: '7 * * * *'
   workflow_dispatch: {}
 
 permissions:
