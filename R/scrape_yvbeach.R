@@ -47,35 +47,35 @@ measured_at <- make_datetime(
   tz    = "Europe/Zurich"
 )
 
-pression_mb <- extract_num("PRESSION\\s*:\\s*(-?[\\d.]+)\\s*mb")
-rafale_kmh  <- extract_num("RAFALE\\s*max/1h\\s*:\\s*(-?[\\d.]+)\\s*km/h")
-vent_kmh    <- extract_num("VENT\\s*moy/10min\\s*:\\s*(-?[\\d.]+)\\s*km/h")
+pressure_mb  <- extract_num("PRESSION\\s*:\\s*(-?[\\d.]+)\\s*mb")
+gust_kmh     <- extract_num("RAFALE\\s*max/1h\\s*:\\s*(-?[\\d.]+)\\s*km/h")
+wind_kmh     <- extract_num("VENT\\s*moy/10min\\s*:\\s*(-?[\\d.]+)\\s*km/h")
 
 dir_match <- str_match(
   text,
   "DIRECTION\\s*moy/10min\\s*:\\s*([A-Z]+)\\s*-\\s*(-?[\\d.]+)\\s*°"
 )
-direction_cardinale <- dir_match[, 2]
-direction_deg <- as.numeric(dir_match[, 3])
+wind_direction_cardinal <- dir_match[, 2]
+wind_direction_deg <- as.numeric(dir_match[, 3])
 
-temperature_c     <- extract_num("TEMPERATURE\\s*:\\s*(-?[\\d.]+)\\s*°C")
-temperature_lac_c <- extract_num("TEMP DU LAC\\s*:\\s*(-?[\\d.]+)\\s*°C")
-humidite_pct      <- extract_num("HUMIDITE\\s*:\\s*(-?[\\d.]+)\\s*%")
-point_de_rosee_c  <- extract_num("POINT DE ROSEE\\s*:\\s*(-?[\\d.]+)\\s*°C")
-pluie_du_jour_mm  <- extract_num("PLUIE DU JOUR\\s*:\\s*(-?[\\d.]+)\\s*mm")
+temperature_c      <- extract_num("TEMPERATURE\\s*:\\s*(-?[\\d.]+)\\s*°C")
+lake_temperature_c <- extract_num("TEMP DU LAC\\s*:\\s*(-?[\\d.]+)\\s*°C")
+humidity_pct       <- extract_num("HUMIDITE\\s*:\\s*(-?[\\d.]+)\\s*%")
+dew_point_c        <- extract_num("POINT DE ROSEE\\s*:\\s*(-?[\\d.]+)\\s*°C")
+rain_today_mm      <- extract_num("PLUIE DU JOUR\\s*:\\s*(-?[\\d.]+)\\s*mm")
 
 new_row <- tibble(
-  timestamp           = measured_at,
-  pression_mb         = pression_mb,
-  rafale_kt           = kmh_to_knots(rafale_kmh),
-  vent_kt             = kmh_to_knots(vent_kmh),
-  direction_cardinale = direction_cardinale,
-  direction_deg       = direction_deg,
-  temperature_c       = temperature_c,
-  temperature_lac_c   = temperature_lac_c,
-  humidite_pct        = humidite_pct,
-  point_de_rosee_c    = point_de_rosee_c,
-  pluie_du_jour_mm    = pluie_du_jour_mm
+  timestamp               = measured_at,
+  pressure_mb             = pressure_mb,
+  gust_kt                 = kmh_to_knots(gust_kmh),
+  wind_kt                 = kmh_to_knots(wind_kmh),
+  wind_direction_cardinal = wind_direction_cardinal,
+  wind_direction_deg      = wind_direction_deg,
+  temperature_c           = temperature_c,
+  lake_temperature_c      = lake_temperature_c,
+  humidity_pct            = humidity_pct,
+  dew_point_c             = dew_point_c,
+  rain_today_mm           = rain_today_mm
 )
 
 required <- setdiff(names(new_row), character(0))
@@ -86,17 +86,17 @@ if (anyNA(new_row[required])) {
 
 if (file.exists(csv_path)) {
   existing <- read_csv(csv_path, col_types = cols(
-    timestamp           = col_datetime(),
-    pression_mb         = col_double(),
-    rafale_kt           = col_double(),
-    vent_kt             = col_double(),
-    direction_cardinale = col_character(),
-    direction_deg       = col_double(),
-    temperature_c       = col_double(),
-    temperature_lac_c   = col_double(),
-    humidite_pct        = col_double(),
-    point_de_rosee_c    = col_double(),
-    pluie_du_jour_mm    = col_double()
+    timestamp               = col_datetime(),
+    pressure_mb             = col_double(),
+    gust_kt                 = col_double(),
+    wind_kt                 = col_double(),
+    wind_direction_cardinal = col_character(),
+    wind_direction_deg      = col_double(),
+    temperature_c           = col_double(),
+    lake_temperature_c      = col_double(),
+    humidity_pct            = col_double(),
+    dew_point_c             = col_double(),
+    rain_today_mm           = col_double()
   ))
   if (nrow(existing) > 0 && max(existing$timestamp) >= new_row$timestamp) {
     message("No new measurement since last scrape - skipping")
