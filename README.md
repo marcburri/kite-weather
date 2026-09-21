@@ -51,3 +51,23 @@ Rscript R/scrape_yvbeach.R
 Runs hourly via [`.github/workflows/scrape.yml`](.github/workflows/scrape.yml)
 (`cron: '0 * * * *'`), and can also be triggered manually from the Actions
 tab (`workflow_dispatch`).
+
+## Wind alerts
+
+[`R/send_wind_alert.R`](R/send_wind_alert.R) sends an email (via
+[blastula](https://pkgs.rstudio.com/blastula/)) when the 10-minute average
+wind (`vent_kt`) crosses **15 kt from below** — a rising edge, so a
+sustained windy spell only emails once, not once per hourly run. It only
+runs when the scrape step actually wrote a new row.
+
+Configured via repo secrets/variables (Settings → Secrets and variables →
+Actions):
+
+| name                 | kind     | purpose                              |
+|-----------------------|----------|----------------------------------------|
+| `GMAIL_USERNAME`       | secret   | sending Gmail address                  |
+| `GMAIL_APP_PASSWORD`   | secret   | [Gmail app password](https://myaccount.google.com/apppasswords) for that address |
+| `ALERT_EMAIL_TO`       | variable | recipient address                      |
+
+To change the threshold, edit `wind_threshold_kt` in
+[`R/send_wind_alert.R`](R/send_wind_alert.R).
