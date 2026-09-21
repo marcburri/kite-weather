@@ -17,14 +17,6 @@ csv_path <- "data/yvbeach.csv"
 
 kmh_to_knots <- function(x) x * 0.539957
 
-# Records a step output when running inside GitHub Actions; no-op locally.
-set_gh_output <- function(name, value) {
-  gh_output <- Sys.getenv("GITHUB_OUTPUT")
-  if (nzchar(gh_output)) {
-    cat(paste0(name, "=", value, "\n"), file = gh_output, append = TRUE)
-  }
-}
-
 page <- request(url) |>
   req_perform() |>
   resp_body_html()
@@ -108,7 +100,6 @@ if (file.exists(csv_path)) {
   ))
   if (nrow(existing) > 0 && max(existing$timestamp) >= new_row$timestamp) {
     message("No new measurement since last scrape - skipping")
-    set_gh_output("new_data", "false")
     quit(save = "no", status = 0)
   }
   out <- bind_rows(existing, new_row)
@@ -119,4 +110,3 @@ if (file.exists(csv_path)) {
 
 write_csv(out, csv_path)
 message("Wrote row for ", format(new_row$timestamp, "%Y-%m-%d %H:%M %Z"))
-set_gh_output("new_data", "true")

@@ -34,11 +34,8 @@ jobs:
             any::lubridate
             any::readr
             any::dplyr
-            any::glue
-            any::blastula
 
       - name: Run scraper
-        id: scrape
         run: Rscript R/scrape_yvbeach.R
 
       - name: Commit and push if changed
@@ -52,11 +49,3 @@ jobs:
             git commit -m "Add scrape $(date -u +'%Y-%m-%dT%H:%M:%SZ')"
             git push
           fi
-
-      - name: Send wind alert if conditions are good
-        if: steps.scrape.outputs.new_data == 'true'
-        env:
-          GMAIL_USERNAME: ${{ secrets.GMAIL_USERNAME }}
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          ALERT_EMAIL_TO: ${{ vars.ALERT_EMAIL_TO }}
-        run: Rscript R/send_wind_alert.R
