@@ -1,4 +1,4 @@
-name: Scrape YvBeach weather station
+name: Scrape kite-weather stations
 
 on:
   schedule:
@@ -9,7 +9,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: scrape-yvbeach
+  group: scrape-kite-weather
   cancel-in-progress: false
 
 jobs:
@@ -35,14 +35,17 @@ jobs:
             any::readr
             any::dplyr
 
-      - name: Run scraper
+      - name: Run YvBeach scraper
         run: Rscript R/scrape_yvbeach.R
+
+      - name: Run Silvaplana scraper
+        run: Rscript R/scrape_silvaplana.R
 
       - name: Commit and push if changed
         run: |
-          git config user.name "yvbeach-weather-bot"
+          git config user.name "kite-weather-bot"
           git config user.email "actions@users.noreply.github.com"
-          git add data/yvbeach.csv
+          git add data/yvbeach.csv data/silvaplana.csv
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
