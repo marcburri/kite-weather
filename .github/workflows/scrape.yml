@@ -6,7 +6,7 @@ on:
     # minute 0 (when most repos' cron jobs fire) and can delay or drop runs
     # scheduled there. See:
     # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '7 * * * *'
+    - cron: '42 * * * *'
   workflow_dispatch: {}
 
 permissions:
